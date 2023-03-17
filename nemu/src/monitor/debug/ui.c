@@ -151,7 +151,7 @@ static int cmd_x(char *args) {
     if(i%5==0){
       printf("\n");
     }
-    printf("0x%x \t",vaddr_read(addr,4));
+    printf("0x%08x \t",vaddr_read(addr,4));
     addr+=4;
   }
   printf("\n");
