@@ -93,7 +93,7 @@ static int cmd_si(char *args) {
   if(args!=NULL) {
     int flag=sscanf(args,"%ld",&N); //read args as a decimal
     if(flag<=0) {
-      printf("Error: Args error in smd_si\n");
+      printf("Error: Args error in cmd_si\n");
       return 0;
     }
   }  
@@ -102,7 +102,35 @@ static int cmd_si(char *args) {
 }
 
 static int cmd_info(char *args) {
-
+  if(args==NULL) {
+    printf("Error: Args cannot be NULL in cmd_info\n");
+    return 0;
+  }
+  char c;
+  int flag=sscanf(args,"%c",&c); //read args as a character
+  if(flag<=0) {
+    printf("Error: Args error in cmd_info\n");
+    return 0;
+  }
+  if(c=='r') {
+    //eip
+    printf("$EIP \t0x%x\n", cpu.eip);
+    //32
+    for(int i=0;i<8;i++){
+      printf("$%s \t0x%x\n", regsl[i], cpu.gpr[i]._32);
+    }
+    //16
+    for(int i=0;i<8;i++){
+      printf("$%s \t0x%x\n", regsw[i], cpu.gpr[i]._16);
+    }
+    //8
+    for(int i=0;i<4;i++){
+      printf("$%s \t0x%x\n", regsb[i], cpu.gpr[i]._8[0]);
+    }
+    for(int i=4;i<8;i++){
+      printf("$%s \t0x%x\n", regsb[i], cpu.gpr[i-4]._8[1]);
+    }
+  }
   return 0;
 }
 
