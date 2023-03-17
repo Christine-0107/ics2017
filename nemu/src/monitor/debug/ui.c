@@ -89,26 +89,28 @@ static int cmd_help(char *args) {
 
 static int cmd_si(char *args) {
   
+  return 0;
 }
 
 static int cmd_info(char *args) {
 
+  return 0;
 }
 
 static int cmd_p(char *args) {
-
+  return 0;
 }
 
 static int cmd_x(char *args) {
-
+  return 0;
 }
 
 static int cmd_w(char *args) {
-
+  return 0;
 }
 
 static int cmd_d(char *args) {
-
+  return 0;
 }
 
 void ui_mainloop(int is_batch_mode) {
