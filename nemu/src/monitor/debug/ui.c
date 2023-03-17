@@ -37,6 +37,12 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_help(char *args);
+static int cmd_si(char *args);
+static int cmd_info(char *args);
+static int cmd_p(char *args);
+static int cmd_x(char *args);
+static int cmd_w(char *args);
+static int cmd_d(char *args);
 
 static struct {
   char *name;
@@ -47,7 +53,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands */
-  { "si", "si [N]; Execute N instructions step by step, and default N is 1; e.g. si 10;", cmd_si }
+  { "si", "si [N]; Execute N instructions step by step, and default N is 1; e.g. si 10;", cmd_si },
   { "info", "info r/w; info r means printing information about registers; info w means printing information about watchpoints;", cmd_info },
   { "p", "p EXPR; Evaluate the value of EXPR;", cmd_p },
   { "x", "x N EXPR; Evaluate the value of EXPR and take the result as the beginning memory address, and output N consecutive 4 bytes in hexadecimal format", cmd_x },
