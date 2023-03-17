@@ -89,7 +89,15 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-  
+  uint64_t N=1;
+  if(args!=NULL) {
+    int flag=sscanf(args,"%d",&N); //read args as a decimal
+    if(flag<=0) {
+      printf("Error: Args error in smd_si\n");
+      return 0;
+    }
+  }  
+  cpu_exec(N);
   return 0;
 }
 
