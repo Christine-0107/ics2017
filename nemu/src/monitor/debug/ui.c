@@ -48,7 +48,11 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   /* TODO: Add more commands */
   { "si", "si [N]; Execute N instructions step by step, and default N is 1; e.g. si 10;", cmd_si }
-
+  { "info", "info r/w; info r means printing information about registers; info w means printing information about watchpoints;", cmd_info },
+  { "p", "p EXPR; Evaluate the value of EXPR;", cmd_p },
+  { "x", "x N EXPR; Evaluate the value of EXPR and take the result as the beginning memory address, and output N consecutive 4 bytes in hexadecimal format", cmd_x },
+  { "w", "w EXPR; Set the watchpoint and when the value of EXPR changes, pause th program; e.g. w *0x2000;", cmd_w },
+  { "d", "d N; Delete the watchpoint with sequence N;", cmd_d },  
 
 };
 
