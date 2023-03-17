@@ -146,12 +146,13 @@ static int cmd_x(char *args) {
     printf("Erro: Args error in cmd_x\n");
     return 0;
   }
-  printf("Memory: ");
+  printf("Memory from 0x%x: ",addr);
   for(int i=0;i<len;i++){
-    if(i%4==0){
-      printf("\n0x%x \t",addr+i);
+    if(i%5==0){
+      printf("\n");
     }
-    printf("0x%02x",vaddr_read(addr+i,1));
+    printf("0x%x",vaddr_read(addr,4));
+    addr+=4;
   }
   printf("\n");
   return 0;
