@@ -137,6 +137,7 @@ static int cmd_info(char *args) {
 static int cmd_p(char *args) {
   bool success=false;
   uint32_t ret = expr(args, &success);
+  printf("1");
   if(success==false){
     printf("Error: In evacuation .\n");
     return 0;
