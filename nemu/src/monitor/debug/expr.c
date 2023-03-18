@@ -203,7 +203,7 @@ int check_parentheses(int p, int q) {
     return -1;
   }
   if(returnValue==0){
-    printf("Fail: Not surrounded by a matched () .\n");
+    //printf("Fail: Not surrounded by a matched () .\n");
     return 0;
   }
   if(returnValue==1){
