@@ -128,36 +128,78 @@ static bool make_token(char *e) {
 }
 
 // Todo: check parentheses
+// Stack
+typedef struct {
+  int size;
+  char element[1000];
+}STACK;
+STACK stack_clean(STACK *s){
+  s->size=0;
+  memset(s->element, 0, 1000);
+  return *s;
+}
+int stack_size(STACK *s){
+  return s->size;
+}
+void stack_push(STACK *s, char c){
+  if(s->size==0){
+    s->element[0]=c;
+    s->size++;
+  }
+  else{
+    for(int i=s->size; i>0; i--){
+      s->element[i]=s->element[i-1];
+    }
+    s->element[0]=c;
+    s->size++;
+  }
+}
+void stack_pop(STACK *s){
+  if(s->size==0){
+    return;
+  }
+  if(s->size==1){
+    s->size=0;
+    return;
+  }
+  for(int i=0; i<s->size; i++){
+    s->element[i]=s->element[i+1];
+  }
+  s->size--;
+}
+
+
 // true return 1，mismatched return -1，not surrounded by a matched () return 0
 int check_parentheses(int p, int q) {
-  stack<char> s;
+  STACK s;
+  s=stack_clean(&s);
   int returnValue=-2;
   // not surrounded by a matched ()
   if(tokens[p].type!='(' || tokens[q].type!=')') {
     returnValue=0;
   }
   else { // surrounded by ()
-    s.push('(');
+    stack_push(&s, '(');
   }
   for(int i=p+1; i<=q; i++) {
     if(tokens[i].type=='(') {
-      s.push('(');
+      stack_push(&s, '(');
     }
     if(tokens[i].type==')') {
-      if(s.size()<=0) {
+      if(stack_size(&s)<=0) {
         printf("Error: Missing '(' .\n");
         return -1;
       }
-      if(i!=q && s.size()==1){
+      if(i!=q && stack_size(&s)==1){
         returnValue=0;
       }
-      if(i==q && s.size()==1){
+      if(i==q && stack_size(&s)==1){
         returnValue=1;
       }
-      s.pop();
+      stack_pop(&s);
     }
   }
-  if(s.size()!=0){
+  if(stack_size(&s)!=0){
     printf("Error: Missing '(' .\n");
     return -1;
   }
