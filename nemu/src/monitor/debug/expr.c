@@ -5,6 +5,7 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+#include <stack>
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
@@ -124,6 +125,50 @@ static bool make_token(char *e) {
   }
 
   return true;
+}
+
+// Todo: check parentheses
+// true return 1，mismatched return -1，not surrounded by a matched () return 0
+int check_parentheses(int p, int q) {
+  stack<char> s;
+  int returnValue=-2;
+  // not surrounded by a matched ()
+  if(tokens[p].type!='(' || tokens[q].type!=')') {
+    returnValue=0;
+  }
+  else { // surrounded by ()
+    s.push('(');
+  }
+  for(int i=p+1; i<=q; i++) {
+    if(tokens[i].type=='(') {
+      s.push('(');
+    }
+    if(tokens[i].type==')') {
+      if(s.size()<=0) {
+        printf("Error: Missing '(' .\n");
+        return -1;
+      }
+      if(i!=q && s.size()==1){
+        returnValue=0;
+      }
+      if(i==q && s.size()==1){
+        returnValue=1;
+      }
+      s.pop();
+    }
+  }
+  if(s.size()!=0){
+    printf("Error: Missing '(' .\n");
+    return -1;
+  }
+  if(returnValue==0){
+    printf("Fail: Not surrounded by a matched () .\n");
+    return 0;
+  }
+  if(returnValue==1){
+    printf("Success: Surrounded by a matched () .\n");
+    return 1;
+  }
 }
 
 uint32_t expr(char *e, bool *success) {
