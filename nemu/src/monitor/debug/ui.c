@@ -135,6 +135,8 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_p(char *args) {
+  char s[1000];
+  int flag = sscanf(args, "%s", s);
   bool success=false;
   uint32_t ret = expr(args, &success);
   printf("1");
