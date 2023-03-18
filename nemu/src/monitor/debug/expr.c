@@ -207,7 +207,7 @@ int check_parentheses(int p, int q) {
     return 0;
   }
   if(returnValue==1){
-    printf("Success: Surrounded by a matched () .\n");
+    printf("Success: Surrounded by a matched () when p=%d, q=%d .\n", p, q);
     return 1;
   }
 }
