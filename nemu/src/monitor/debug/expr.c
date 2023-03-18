@@ -280,15 +280,15 @@ uint32_t eval(int p, int q) {
   else if(p==q) {
     //should be a number or register
     if(tokens[p].type==TK_DEC){
-      char *ptr;
+      //char *ptr;
       uint32_t ret;
-      ret = strtoul(tokens[p].str, &ptr, 10);
+      ret = strtol(tokens[p].str, NULL, 10);
       return ret;
     }
     if(tokens[p].type==TK_HEX){
-      char *ptr;
+      //char *ptr;
       uint32_t ret;
-      ret = strtoul(tokens[p].str, &ptr, 16);
+      ret = strtol(tokens[p].str, NULL, 16);
       return ret;
     }
     if(tokens[p].type==TK_REG){
