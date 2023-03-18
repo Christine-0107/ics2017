@@ -139,7 +139,7 @@ static int cmd_p(char *args) {
   char s[1000];
   int flag = sscanf(args, "%s", s);
   bool success=false;
-  uint32_t ret = expr(s, &success);
+  uint32_t ret = expr(&s, &success);
   printf("1");
   if(success==false){
     printf("Error: In evacuation .\n");
@@ -209,7 +209,6 @@ void ui_mainloop(int is_batch_mode) {
     int i;
     for (i = 0; i < NR_CMD; i ++) {
       if (strcmp(cmd, cmd_table[i].name) == 0) {
-        printf("known command '%s'\n", cmd);
         if (cmd_table[i].handler(args) < 0) { return; }
         break;
       }
