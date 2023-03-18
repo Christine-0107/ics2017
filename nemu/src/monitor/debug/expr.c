@@ -272,6 +272,111 @@ int find_dominant_operator(int p, int q) {
   assert(0);
 }
 
+uint32_t eval(int p, int q) {
+  if(p>q) {
+    printf("Error: p>q in eval() when p=%d, q=%d .\n", p, q);
+    assert(0);
+  }
+  else if(p==q) {
+    //should be a number or register
+    if(tokens[p].type==TK_DEC){
+      char *ptr;
+      uint32_t ret;
+      ret = strtoul(tokens[p].str, &ptr, 10);
+      return ret;
+    }
+    if(tokens[p].type==TK_HEX){
+      char *ptr;
+      uint32_t ret;
+      ret = strtoul(tokens[p].str, &ptr, 16);
+      return ret;
+    }
+    if(tokens[p].type==TK_REG){
+      for(int i=0; i<8; i++){
+        if(strcmp(tokens[p].str, regsl[i])==0){
+          return cpu.gpr[i]._32;
+        }
+        if(strcmp(tokens[p].str, regsw[i])==0){
+          return cpu.gpr[i]._16;
+        }
+      }
+      for(int i=0;i<4;i++){
+        if(strcmp(tokens[p].str, regsb[i])==0){
+          return cpu.gpr[i]._8[0];
+        }
+      }
+      for(int i=4;i<8;i++){
+        if(strcmp(tokens[p].str, regsb[i])==0){
+          return cpu.gpr[i-4]._8[1];
+        }
+      }
+      if(strcmp(tokens[p].str, "eip")==0){
+        return cpu.eip;
+      }
+      printf("Error: Cannot eval register in TK_REG when p=%d, q=%d .\n", p, q);
+      assert(0);
+    }
+    printf("Error: Cannot eval in single token when p=%d, q=%d .\n", p, q);
+    assert(0);
+  }
+  else if(check_parentheses(p, q)==1) {
+    return eval(p+1, q-1);
+  }
+  else {
+    int op = find_dominant_operator(p, q);
+    int op_type = tokens[op].type;
+    // Monocular operators
+    vaddr_t addr;
+    uint32_t result;
+    switch(op_type){
+      case TK_POINT:
+        addr=eval(p+1,q);
+        result=vaddr_read(addr,4);
+        return result;
+      case TK_NEG:
+        result=-eval(p+1,q);
+        return result;
+      case '!':
+        result=eval(p+1,q);
+        if(result==0){
+          result=1;
+        }
+        else{
+          result=0;
+        }
+        return result;
+    }
+    // Binocular operators
+    int val1 = eval(p,op-1);
+    int val2 = eval(op+1,q);
+    switch(op_type){
+      case '+':
+        return val1 + val2;
+      case '-':
+        return val1 - val2;
+      case '*':
+        return val1 * val2;
+      case '/':
+        if(val2==0){
+          printf("Error: Val2 cannot be 0 in '/' when p=%d, q=%d .\n", p, q);
+          assert(0);
+        }
+        return val1 / val2;
+      case TK_EQ:
+        return val1 == val2;
+      case TK_NEQ:
+        return val1 != val2;
+      case TK_AND:
+        return val1 && val2;
+      case TK_OR:
+        return val1 || val2;
+      default:
+        printf("Error: Invalid operator when p=%d, q=%d .\n", p, q);
+        assert(0);
+    }
+  }
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
