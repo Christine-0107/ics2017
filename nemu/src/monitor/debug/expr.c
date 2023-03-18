@@ -90,10 +90,28 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
-        switch (rules[i].token_type) {
-          default: TODO();
+        // record the token.type
+        if(rules[i].token_type==TK_NOTYPE){
+          break;
         }
+        tokens[nr_token].type=rules[i].token_type;
+        // record the token.str
+        switch (rules[i].token_type) {
+          case TK_DEC:
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            *(tokens[nr_token].str+substr_len)='\0';
+            break;
+          case TK_HEX:
+            strncpy(tokens[nr_token].str, substr_start+2, substr_len-2);
+            *(tokens[nr_token].str+substr_len-2)='\0';
+            break;
+          case TK_REG:
+            strncpy(tokens[nr_token].str, substr_start+1, substr_len-1);
+            *(tokens[nr_token].str+substr_len-1)='\0';
+            break;
+        }
+        printf("Regonize token %d, type %d, str %s\n", nr_token, tokens[nr_token].type, tokens[nr_token].str);
+        nr_token += 1;
 
         break;
       }
