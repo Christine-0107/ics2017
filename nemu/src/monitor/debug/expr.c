@@ -388,7 +388,15 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  //TODO();
+  for(int i=0; i<nr_token; i++){
+    if(tokens[i].type == '*' && (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i-1].type!= TK_HEX && tokens[i-1].type!= TK_REG && tokens[i-1].type!=')')) ) 
+      tokens[i].type = TK_POINT;
+    if(tokens[i].type == '-' && (i == 0 || (tokens[i - 1].type != TK_DEC && tokens[i-1].type!= TK_HEX && tokens[i-1].type!= TK_REG && tokens[i-1].type!=')')) ) 
+      tokens[i].type = TK_NEG;
+  }
+  *success = true;
+  return eval(0, nr_token-1);
 
   return 0;
 }
