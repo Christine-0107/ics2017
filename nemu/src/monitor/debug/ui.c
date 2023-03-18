@@ -89,7 +89,6 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
-  printf("1");
   uint64_t N=1;
   if(args!=NULL) {
     int flag=sscanf(args,"%ld",&N); //read args as a decimal
@@ -139,6 +138,10 @@ static int cmd_p(char *args) {
   printf("1");
   char s[1000];
   int flag = sscanf(args, "%s", s);
+  if(flag<=0){
+    printf("Erro: Args error in cmd_p\n");
+    return 0;
+  }
   bool success=false;
   uint32_t ret = expr(&s, &success);
   printf("1");
