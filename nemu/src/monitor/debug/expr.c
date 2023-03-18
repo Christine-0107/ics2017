@@ -7,10 +7,10 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ
+  TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-
+  TK_DEC, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_OR, 
 };
 
 static struct rule {
@@ -23,8 +23,20 @@ static struct rule {
    */
 
   {" +", TK_NOTYPE},    // spaces
+  {"0x[1-9a-fA-F][0-9a-fA-F]*", TK_HEX},	// hexadecimal
+  {"0|[1-9][0-9]*", TK_DEC},		//decimal
+  {"\\$(eax|ebx|ecx|edx|esp|ebp|esi|edi|ax|cx|dx|bx|sp|bp|si|di|al|cl|dl|bl|ah|ch|dh|bh|eip)", TK_REG},		//register
+  {"\\(", '('},		// left
+  {"\\)", ')'},		// right
+  {"\\*", '*'},		// multiple
+  {"\\/", '/'},		// divide
   {"\\+", '+'},         // plus
-  {"==", TK_EQ}         // equal
+  {"\\-", '-'},		// minus
+  {"==", TK_EQ},         // equal
+  {"!=", TK_NEQ},	// not equal
+  {"&&", TK_AND},	// and
+  {"\\|\\|", TK_OR},	// or
+  {"!", '!'},		// not
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
