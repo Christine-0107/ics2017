@@ -322,7 +322,7 @@ uint32_t eval(int p, int q) {
   else if(check_parentheses(p, q)==1) {
     return eval(p+1, q-1);
   }
-  else {
+  else if(check_parentheses(p, q)==0) {
     int op = find_dominant_operator(p, q);
     int op_type = tokens[op].type;
     // Monocular operators
@@ -374,6 +374,10 @@ uint32_t eval(int p, int q) {
         printf("Error: Invalid operator when p=%d, q=%d .\n", p, q);
         assert(0);
     }
+  }
+  else {
+    printf("Error: Invalid expression when p=%d, q=%d .\n", p, q);
+    assert(0);
   }
 }
 
