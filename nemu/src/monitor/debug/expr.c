@@ -10,7 +10,7 @@ enum {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
-  TK_DEC, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_OR, 
+  TK_DEC, TK_HEX, TK_REG, TK_NEQ, TK_AND, TK_OR, TK_POINT, TK_NEG
 };
 
 static struct rule {
@@ -210,6 +210,66 @@ int check_parentheses(int p, int q) {
     printf("Success: Surrounded by a matched () .\n");
     return 1;
   }
+}
+
+int find_dominant_operator(int p, int q) {
+  STACK s;
+  s=stack_clean(&s);
+  int operator[6]={-1, -1, -1, -1, -1, -1};
+  // Monocular operators are right associative
+  for(int i=q; i>=p; i--){
+    if(tokens[i].type==')'){
+      stack_push(&s, ')');
+    }
+    if(tokens[i].type=='('){
+      stack_pop(&s);
+    }
+    if(stack_size(&s)>0){
+      continue;
+    }
+    else{
+      if(tokens[i].type=='!' || tokens[i].type==TK_POINT || tokens[i].type==TK_NEG){
+        operator[5]=i;
+      }
+    }
+  }
+  s=stack_clean(&s);
+  // Binocular operators are left associative
+  for(int i=p; i<=q; i++){
+    if(tokens[i].type=='('){
+      stack_push(&s, '(');
+    }
+    if(tokens[i].type==')'){
+      stack_pop(&s);
+    }
+    if(stack_size(&s)>0){
+      continue;
+    }
+    else{
+      if(tokens[i].type=='*' || tokens[i].type=='/'){
+        operator[4]=i;
+      }
+      else if(tokens[i].type=='+' || tokens[i].type=='-'){
+        operator[3]=i;
+      }
+      else if(tokens[i].type==TK_EQ || tokens[i].type==TK_NEQ){
+        operator[2]=i;
+      }
+      else if(tokens[i].type==TK_AND){
+        operator[1]=i;
+      }
+      else if(tokens[i].type==TK_OR){
+        operator[0]=i;
+      }
+    }
+  }
+  for(int i=0;i<6;i++){
+    if(operator[i]!=-1){
+      return operator[i];
+    }
+  }
+  printf("Error: Cannot find diminant operator when p=%d, q=%d .\n", p, q);
+  assert(0);
 }
 
 uint32_t expr(char *e, bool *success) {
