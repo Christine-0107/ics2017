@@ -272,7 +272,7 @@ int find_dominant_operator(int p, int q) {
   assert(0);
 }
 
-uint32_t eval(int p, int q) {
+int eval(int p, int q) {
   if(p>q) {
     printf("Error: p>q in eval() when p=%d, q=%d .\n", p, q);
     assert(0);
@@ -281,13 +281,13 @@ uint32_t eval(int p, int q) {
     //should be a number or register
     if(tokens[p].type==TK_DEC){
       //char *ptr;
-      uint32_t ret;
+      int ret;
       ret = strtol(tokens[p].str, NULL, 10);
       return ret;
     }
     if(tokens[p].type==TK_HEX){
       //char *ptr;
-      uint32_t ret;
+      int ret;
       ret = strtol(tokens[p].str, NULL, 16);
       return ret;
     }
