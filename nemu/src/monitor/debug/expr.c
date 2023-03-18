@@ -294,7 +294,7 @@ uint32_t eval(int p, int q) {
     if(tokens[p].type==TK_REG){
       for(int i=0; i<8; i++){
         if(strcmp(tokens[p].str, regsl[i])==0){
-          printf(regsl[i]);
+          printf("%s \n", regsl[i]);
           return cpu.gpr[i]._32;
         }
         if(strcmp(tokens[p].str, regsw[i])==0){
