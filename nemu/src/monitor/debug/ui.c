@@ -139,7 +139,7 @@ static int cmd_p(char *args) {
   char s[1000];
   int flag = sscanf(args, "%s", s);
   bool success=false;
-  uint32_t ret = expr(args, &success);
+  uint32_t ret = expr(s, &success);
   printf("1");
   if(success==false){
     printf("Error: In evacuation .\n");
