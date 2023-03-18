@@ -327,7 +327,7 @@ uint32_t eval(int p, int q) {
     int op_type = tokens[op].type;
     // Monocular operators
     vaddr_t addr;
-    uint32_t result;
+    int result;
     switch(op_type){
       case TK_POINT:
         addr=eval(p+1,q);
