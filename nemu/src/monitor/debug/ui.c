@@ -89,6 +89,7 @@ static int cmd_help(char *args) {
 }
 
 static int cmd_si(char *args) {
+  printf("1");
   uint64_t N=1;
   if(args!=NULL) {
     int flag=sscanf(args,"%ld",&N); //read args as a decimal
