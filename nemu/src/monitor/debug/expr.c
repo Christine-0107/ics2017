@@ -192,7 +192,7 @@ int check_parentheses(int p, int q) {
       if(i!=q && stack_size(&s)==1){
         returnValue=0;
       }
-      if(i==q && stack_size(&s)==1){
+      if(i==q && stack_size(&s)==1 && returnValue!=0){
         returnValue=1;
       }
       stack_pop(&s);
