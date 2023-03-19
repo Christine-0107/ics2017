@@ -81,3 +81,29 @@ bool free_wp(WP *wp) {
   return true;
 }
 
+//TODO check whether the value of watchpoint has changed
+//unchanged-false  changed-true
+bool test_watchpoint() {
+  if(head==NULL){
+    return false;
+  }
+  WP *p = head;
+  bool success=false;
+  int ret;
+  while(p!=NULL){
+    ret=expr(p->exp,&success);
+    if(success==false){
+      printf("Error: In evacuation .\n");
+      assert(0);
+    }
+    else{
+      if(ret!=p->value){
+        p->value=ret;
+        printf("Watchpoint: The value has changed. Watchpoint %d expr=%s .\n", p->NO, p->exp);
+        return true;
+      }
+      p=p->next;
+    }
+  }
+  return false;
+}
