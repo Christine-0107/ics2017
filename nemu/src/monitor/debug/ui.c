@@ -183,10 +183,33 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_w(char *args) {
+  char s[1000];
+  int flag = sscanf(args, "%s", s);
+  if(flag<=0){
+    printf("Erro: Args error in cmd_p\n");
+    return 0;
+  }
+  WP *result = new_wp(s);
+  printf("A new watchpoint has been allocated. NO=%d, exp=%s .\n", result->NO, result->exp);
   return 0;
 }
 
 static int cmd_d(char *args) {
+  int num;
+  int flag = sscanf(args, "%d", &num);
+  if(flag<=0){
+    printf("Erro: Args error in cmd_p\n");
+    return 0;
+  }
+  WP *wp = find_wp(num);
+  if(wp==NULL){
+    printf("Nothing to delete\n");
+    return 0;
+  }
+  bool res=free_wp(wp);
+  if(res==true){
+    printf("A watchpoint has been deleted. NO=%d .\n", num);
+  }
   return 0;
 }
 

@@ -81,6 +81,17 @@ bool free_wp(WP *wp) {
   return true;
 }
 
+WP* find_wp(int num) {
+  WP* p=head;
+  while(p!=NULL){
+    if(p->NO==num){
+      return p;
+    }
+    p=p->next;
+  }
+  return NULL;
+}
+
 //TODO check whether the value of watchpoint has changed
 //unchanged-false  changed-true
 bool test_watchpoint() {
