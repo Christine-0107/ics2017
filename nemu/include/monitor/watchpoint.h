@@ -18,5 +18,6 @@ bool free_wp(WP *wp);
 WP* find_wp(int num);
 
 bool test_watchpoint();
+void print_wp();
 
 #endif

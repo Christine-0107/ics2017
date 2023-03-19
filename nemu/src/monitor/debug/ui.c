@@ -131,6 +131,9 @@ static int cmd_info(char *args) {
       printf("$%s \t0x%x\n", regsb[i], cpu.gpr[i-4]._8[1]);
     }
   }
+  else if(c=='w') {
+    print_wp();
+  }
   return 0;
 }
 

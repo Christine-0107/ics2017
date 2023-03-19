@@ -118,3 +118,17 @@ bool test_watchpoint() {
   }
   return false;
 }
+
+void print_wp() {
+  if(head==NULL){
+    printf("No watchpoint at present.\n");
+    return;
+  }
+  printf("Watchpoint: \n");
+  printf("NO. \texp \tvalue \n");
+  WP *p=head;
+  while(p!=NULL){
+    printf("%d \t%s \t%u \n", p->NO, p->exp, p->value);
+    p=p->next;
+  }
+}
