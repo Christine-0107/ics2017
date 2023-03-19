@@ -193,7 +193,7 @@ static int cmd_w(char *args) {
     return 0;
   }
   WP *result = new_wp(s);
-  printf("A new watchpoint has been allocated. NO=%d, exp=%s .\n", result->NO, result->exp);
+  printf("A new watchpoint has been allocated. NO=%d, exp: %s ,value=%u.\n", result->NO, result->exp, result->value);
   return 0;
 }
 

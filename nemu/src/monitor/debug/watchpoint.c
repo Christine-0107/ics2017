@@ -128,7 +128,7 @@ void print_wp() {
   printf("NO. \texp \tvalue \n");
   WP *p=head;
   while(p!=NULL){
-    printf("%d \t%s \t%u \n", p->NO, p->exp, p->value);
+    printf("%d \t%s \t%u\n", p->NO, p->exp, p->value);
     p=p->next;
   }
 }
