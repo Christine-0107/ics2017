@@ -148,7 +148,7 @@ static int cmd_p(char *args) {
     return 0;
   }
   else{
-    printf("The value is %d .\n", ret);
+    printf("The value is %u .\n", ret);
     return 0;
   }
 }

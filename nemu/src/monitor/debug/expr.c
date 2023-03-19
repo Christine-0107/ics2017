@@ -202,14 +202,11 @@ int check_parentheses(int p, int q) {
     printf("Error: Missing '(' .\n");
     return -1;
   }
-  if(returnValue==0){
-    //printf("Fail: Not surrounded by a matched () .\n");
-    return 0;
-  }
   if(returnValue==1){
     printf("Success: Surrounded by a matched () when p=%d, q=%d .\n", p, q);
     return 1;
   }
+  return 0;
 }
 
 int find_dominant_operator(int p, int q) {
