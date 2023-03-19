@@ -19,5 +19,33 @@ void init_wp_pool() {
 }
 
 /* TODO: Implement the functionality of watchpoint */
-
+// Return a free WP struct
+WP* new_wp(char *exp) {
+  assert(free_!=NULL);
+  WP *result = free_;
+  free_ = free_->next;
+  result->next = NULL;
+  strcpy(result->exp,exp);
+  bool success = false;
+  uint32_t ret = expr(exp, &success);
+  if(success==false){
+    printf("Error: In evacuation .\n");
+    assert(0);
+  }
+  else{
+    printf("The unsigned value of the watchpoint expr is %u .\n", ret);
+  }
+  result->value=ret;
+  if(head==NULL){
+    head = result;
+  }
+  else{
+    WP *p = head;
+    while(p->next!=NULL){
+      p=p->next;
+    }
+    p->next = result;
+  }
+  return result;
+}
 
