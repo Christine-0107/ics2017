@@ -49,3 +49,35 @@ WP* new_wp(char *exp) {
   return result;
 }
 
+bool free_wp(WP *wp) {
+  if(wp==NULL){
+    printf("Error: wp cannot be NULL in free_wp.\n");
+    return false;
+  }
+  if(head==NULL){
+    printf("Error: head is NULL, nothing to free.\n");
+    return false;
+  }
+  if(wp==head){
+    head = head->next;
+  }
+  else{
+    WP *p=head;
+    while(p->next!=NULL){
+      if(p->next==wp){
+        break;
+      }
+    }
+    if(p->next==NULL){
+      printf("Error: no wp in head.\n");
+      return false;
+    }
+    p->next=wp->next;
+  }
+  memset(wp->exp,0,1000);
+  wp->value=0;
+  wp->next=free_;
+  free_=wp;
+  return true;
+}
+
