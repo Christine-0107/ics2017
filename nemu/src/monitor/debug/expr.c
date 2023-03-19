@@ -209,7 +209,7 @@ int check_parentheses(int p, int q) {
   return 0;
 }
 
-int find_dominant_operator(int p, int q) {
+int find_dominant_operator(int p, int q, bool *success) {
   STACK s;
   s=stack_clean(&s);
   int operator[6]={-1, -1, -1, -1, -1, -1};
@@ -265,8 +265,9 @@ int find_dominant_operator(int p, int q) {
       return operator[i];
     }
   }
+  *success=false;
   printf("Error: Cannot find diminant operator when p=%d, q=%d .\n", p, q);
-  assert(0);
+  //assert(0);
 }
 
 int eval(int p, int q, bool *success) {
@@ -327,7 +328,10 @@ int eval(int p, int q, bool *success) {
     return eval(p+1, q-1, success);
   }
   else if(check_parentheses(p, q)==0) {
-    int op = find_dominant_operator(p, q);
+    int op = find_dominant_operator(p, q, success);
+    if(*success==false){
+      return -1;
+    }
     int op_type = tokens[op].type;
     // Monocular operators
     vaddr_t addr;
