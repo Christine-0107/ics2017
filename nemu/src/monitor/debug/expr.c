@@ -92,7 +92,7 @@ static bool make_token(char *e) {
          */
         // record the token.type
         if(rules[i].token_type==TK_NOTYPE){
-          break;
+          continue;
         }
         tokens[nr_token].type=rules[i].token_type;
         // record the token.str
