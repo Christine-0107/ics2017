@@ -92,7 +92,8 @@ static bool make_token(char *e) {
          */
         // record the token.type
         if(rules[i].token_type==TK_NOTYPE){
-          continue;
+          printf("position=%d\n", position);
+          break;
         }
         tokens[nr_token].type=rules[i].token_type;
         // record the token.str
