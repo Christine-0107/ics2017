@@ -324,7 +324,7 @@ int eval(int p, int q, bool *success) {
     //assert(0);
   }
   else if(check_parentheses(p, q)==1) {
-    return eval(p+1, q-1, &success);
+    return eval(p+1, q-1, success);
   }
   else if(check_parentheses(p, q)==0) {
     int op = find_dominant_operator(p, q);
@@ -334,14 +334,14 @@ int eval(int p, int q, bool *success) {
     int result;
     switch(op_type){
       case TK_POINT:
-        addr=eval(p+1,q,&success);
+        addr=eval(p+1,q,success);
         result=vaddr_read(addr,4);
         return result;
       case TK_NEG:
-        result=-eval(p+1,q,&success);
+        result=-eval(p+1,q,success);
         return result;
       case '!':
-        result=eval(p+1,q,&success);
+        result=eval(p+1,q,success);
         if(result==0){
           result=1;
         }
@@ -351,8 +351,8 @@ int eval(int p, int q, bool *success) {
         return result;
     }
     // Binocular operators
-    int val1 = eval(p,op-1,&success);
-    int val2 = eval(op+1,q,&success);
+    int val1 = eval(p,op-1,success);
+    int val2 = eval(op+1,q,success);
     switch(op_type){
       case '+':
         return val1 + val2;
@@ -406,5 +406,5 @@ uint32_t expr(char *e, bool *success) {
       tokens[i].type = TK_NEG;
   }
   *success = true;
-  return eval(0, nr_token-1, &success);
+  return eval(0, nr_token-1, success);
 }
