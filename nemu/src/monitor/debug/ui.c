@@ -157,9 +157,17 @@ static int cmd_p(char *args) {
 static int cmd_x(char *args) {
   vaddr_t addr; //starting address
   int len; //length
-  int flag=sscanf(args,"%d 0x%x",&len,&addr);
-  if(flag<=0){
-    printf("Erro: Args error in cmd_x\n");
+  char *ptr;
+  len = strtol(args, &ptr, 10);
+  //int flag=sscanf(args,"%d 0x%x",&len,&addr);
+  if(ptr==NULL){
+    printf("Error: Args error in cmd_x\n");
+    return 0;
+  }
+  bool success;
+  addr = expr(ptr,&success);
+  if(success==false){
+    printf("Error: Evaluation error in cmd_x\n");
     return 0;
   }
   printf("Memory from 0x%x: ",addr);
