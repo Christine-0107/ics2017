@@ -317,7 +317,8 @@ int eval(int p, int q, bool *success) {
         return cpu.eip;
       }
       printf("Error: Cannot eval register in TK_REG when p=%d, q=%d .\n", p, q);
-      assert(0);
+      *success=false;
+      return -1;
     }
     printf("Error: Cannot eval in single token when p=%d, q=%d .\n", p, q);
     *success=false;
