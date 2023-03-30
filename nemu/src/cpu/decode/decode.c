@@ -14,7 +14,7 @@ const rtlreg_t tzero = 0;
 static inline make_DopHelper(I) {
   /* eip here is pointing to the immediate */
   op->type = OP_TYPE_IMM;
-  op->imm = instr_fetch(eip, op->width);
+  op->imm = instr_fetch(eip, op->width); //操作数在指令中，通过instr_fetch取出
   rtl_li(&op->val, op->imm);
 
 #ifdef DEBUG
@@ -54,7 +54,7 @@ static inline make_DopHelper(SI) {
 static inline make_DopHelper(a) {
   op->type = OP_TYPE_REG;
   op->reg = R_EAX;
-  if (load_val) {
+  if (load_val) { //load_val为真表示需要将操作数读到decoding中，供后续使用
     rtl_lr(&op->val, R_EAX, op->width);
   }
 
@@ -304,7 +304,7 @@ make_DHelper(out_a2dx) {
 #endif
 }
 
-void operand_write(Operand *op, rtlreg_t* src) {
+void operand_write(Operand *op, rtlreg_t* src) { //根据op决定写寄存器还是写内存
   if (op->type == OP_TYPE_REG) { rtl_sr(op->reg, op->width, src); }
   else if (op->type == OP_TYPE_MEM) { rtl_sm(&op->addr, op->width, src); }
   else { assert(0); }

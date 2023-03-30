@@ -21,6 +21,7 @@ static inline void set_width(int width) {
 }
 
 /* Instruction Decode and EXecute */
+// 实现译码和执行之间的解耦
 static inline void idex(vaddr_t *eip, opcode_entry *e) {
   /* eip is pointing to the byte next to opcode */
   if (e->decode)
@@ -206,17 +207,17 @@ opcode_entry opcode_table [512] = {
 };
 
 static make_EHelper(2byte_esc) {
-  uint32_t opcode = instr_fetch(eip, 1) | 0x100;
-  decoding.opcode = opcode;
-  set_width(opcode_table[opcode].width);
-  idex(eip, &opcode_table[opcode]);
+  uint32_t opcode = instr_fetch(eip, 1) | 0x100; 
+  decoding.opcode = opcode; 
+  set_width(opcode_table[opcode].width); 
+  idex(eip, &opcode_table[opcode]); 
 }
 
 make_EHelper(real) {
-  uint32_t opcode = instr_fetch(eip, 1);
-  decoding.opcode = opcode;
-  set_width(opcode_table[opcode].width);
-  idex(eip, &opcode_table[opcode]);
+  uint32_t opcode = instr_fetch(eip, 1); //取指令的第一个字节
+  decoding.opcode = opcode; //记录在全局译码信息 decoding
+  set_width(opcode_table[opcode].width); //调用set_width记录到全局译码信息 decoding中
+  idex(eip, &opcode_table[opcode]); //进一步译码和执行
 }
 
 static inline void update_eip(void) {
@@ -230,7 +231,7 @@ void exec_wrapper(bool print_flag) {
 #endif
 
   decoding.seq_eip = cpu.eip;
-  exec_real(&decoding.seq_eip);
+  exec_real(&decoding.seq_eip); //返回时decoding.seq_eip将会指向下一条指令的地址
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - cpu.eip;

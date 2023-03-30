@@ -3,6 +3,8 @@
 
 #include "nemu.h"
 
+//RTL寄存器使用rtlreg_t来定义，其实就是uint32_t类型
+//RTL寄存器包括：8个通用寄存器；访存地址和操作数；临时寄存器t0-t3；零寄存器tzero
 extern rtlreg_t t0, t1, t2, t3;
 extern const rtlreg_t tzero;
 
