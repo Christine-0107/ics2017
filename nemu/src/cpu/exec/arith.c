@@ -7,7 +7,20 @@ make_EHelper(add) {
 }
 
 make_EHelper(sub) {
-  TODO();
+  rtl_sub(&t2, &id_dest->val, &id_src->val); //目的操作数-源操作数
+  operand_write(id_dest, &t2); //结果存在t2，写回目的操作数
+
+  rtl_update_ZFSF(&t2, id_dest->width); //更新ZF、SF
+
+  rtl_sltu(&t1, &id_dest->val, &t2); //当被减数<结果时，发生借位
+  rtl_set_CF(&t1); //CF置位
+
+  //当（负-正 = 正）和（正-负 = 负）时发生溢出
+  rtl_xor(&t0, &id_dest->val, &id_src->val);
+  rtl_xor(&t1, &id_dest->val, &t2);
+  rtl_and(&t2, &t0, &t1);
+  rtl_msb(&t2, &t2, id_dest->width); //取符号位
+  rtl_set_OF(&t2); //OF置位
 
   print_asm_template2(sub);
 }
