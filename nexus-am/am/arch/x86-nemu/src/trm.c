@@ -10,6 +10,7 @@ extern char _heap_start;
 extern char _heap_end;
 extern int main();
 
+//用于指示堆区的起始和末尾
 _Area _heap = {
   .start = &_heap_start,
   .end = &_heap_end,
@@ -27,6 +28,7 @@ static void serial_init() {
 #endif
 }
 
+//输出一个字符
 void _putc(char ch) {
 #ifdef HAS_SERIAL
   while ((inb(SERIAL_PORT + 5) & 0x20) == 0);
@@ -34,6 +36,7 @@ void _putc(char ch) {
 #endif
 }
 
+//结束程序运行
 void _halt(int code) {
   asm volatile(".byte 0xd6" : :"a"(code));
 
@@ -41,6 +44,7 @@ void _halt(int code) {
   while (1);
 }
 
+//TRM相关初始化
 void _trm_init() {
   serial_init();
   int ret = main();
