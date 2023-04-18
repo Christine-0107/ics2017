@@ -40,3 +40,5 @@ make_EHelper(imul1);
 make_EHelper(imul2);
 make_EHelper(imul3);
 make_EHelper(jmp);
+
+make_EHelper(cltd);
