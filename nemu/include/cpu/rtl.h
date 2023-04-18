@@ -10,7 +10,7 @@ extern const rtlreg_t tzero;
 
 /* RTL basic instructions */
 
-static inline void rtl_li(rtlreg_t* dest, uint32_t imm) {
+static void rtl_li(rtlreg_t* dest, uint32_t imm) {
   *dest = imm;
 }
 
@@ -126,7 +126,7 @@ make_rtl_setget_eflags(OF)
 make_rtl_setget_eflags(ZF)
 make_rtl_setget_eflags(SF)
 
-inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
+static inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
   // dest <- src1
   *dest = *src1;
 }
