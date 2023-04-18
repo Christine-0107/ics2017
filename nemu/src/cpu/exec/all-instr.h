@@ -42,3 +42,5 @@ make_EHelper(imul3);
 make_EHelper(jmp);
 
 make_EHelper(cltd);
+make_EHelper(idiv);
+make_EHelper(div);
