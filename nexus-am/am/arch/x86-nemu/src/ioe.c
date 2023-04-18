@@ -33,8 +33,8 @@ void _draw_sync() {
 }
 
 int _read_key() {
-  if(inb(I8042_STATUS_PORT)==1){
-    return inl(I8042_DATA_PORT);
+  if(inb(0x64)==1){
+    return inl(0x60);
   }
   return _KEY_NONE;
 }
