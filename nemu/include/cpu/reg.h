@@ -49,6 +49,14 @@ typedef struct {
       rtlreg_t value;
   }eflags;
 
+  uint32_t cs;
+
+  //添加IDTR寄存器
+  struct{
+    uint16_t limit; //长度
+    uint32_t base; //首地址
+  }idtr;
+
 } CPU_state;
 
 extern CPU_state cpu;
