@@ -3,8 +3,6 @@
 
 #include "nemu.h"
 
-//RTL寄存器使用rtlreg_t来定义，其实就是uint32_t类型
-//RTL寄存器包括：8个通用寄存器；访存地址和操作数；临时寄存器t0-t3；零寄存器tzero
 extern rtlreg_t t0, t1, t2, t3;
 extern const rtlreg_t tzero;
 
@@ -104,6 +102,7 @@ static inline void rtl_lr(rtlreg_t* dest, int r, int width) {
   }
 }
 
+//将src1中的内容写入编号为r的寄存器中。其中要根据宽度来选择不同宽度的寄存器
 static inline void rtl_sr(int r, int width, const rtlreg_t* src1) {
   switch (width) {
     case 4: rtl_sr_l(r, src1); return;
@@ -115,10 +114,10 @@ static inline void rtl_sr(int r, int width, const rtlreg_t* src1) {
 
 #define make_rtl_setget_eflags(f) \
   static inline void concat(rtl_set_, f) (const rtlreg_t* src) { \
-    cpu.eflags.f = *src; \
+    cpu.f=*src; \
   } \
   static inline void concat(rtl_get_, f) (rtlreg_t* dest) { \
-    *dest = cpu.eflags.f; \
+    *dest = cpu.f; \
   }
 
 make_rtl_setget_eflags(CF)
@@ -128,68 +127,81 @@ make_rtl_setget_eflags(SF)
 
 static inline void rtl_mv(rtlreg_t* dest, const rtlreg_t *src1) {
   // dest <- src1
+  // TODO();
   *dest = *src1;
 }
 
 static inline void rtl_not(rtlreg_t* dest) {
   // dest <- ~dest
+  // TODO();
   *dest = ~(*dest);
 }
 
 static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
-  // dest <- signext(srcint32_t dm = (int32_t) * src1);
-  //符号扩展
-  rtl_shli(&t2, src1, 32-width*8);
-	rtl_sari(dest, &t2, 32-width*8);
+  // dest <- signext(src1[(width * 8 - 1) .. 0])
+  // TODO();
+  if(width==4){
+    *dest=*src1;
+  }else{
+    assert(width==1||width==2);
+    rtl_shli(dest,src1,(4-width)*8);
+    rtl_sari(dest,dest,(4-width)*8);
+  }
 }
 
 static inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
   // M[esp] <- src1
-  rtl_subi(&cpu.esp,&cpu.esp,4);
-  rtl_sm(&cpu.esp,4,src1);
+  rtl_subi(&cpu.esp,&cpu.esp,4);    //抬高栈顶cpu.esp。32bit
+  rtl_sm(&cpu.esp,4,src1);          //写入内存
 }
 
 static inline void rtl_pop(rtlreg_t* dest) {
   // dest <- M[esp]
   // esp <- esp + 4
-  rtl_lm(dest, &cpu.esp, 4);
-  rtl_addi(&cpu.esp, &cpu.esp, 4);
+  rtl_lm(dest,&cpu.esp,4);
+  rtl_addi(&cpu.esp,&cpu.esp,4);
 }
 
 static inline void rtl_eq0(rtlreg_t* dest, const rtlreg_t* src1) {
   // dest <- (src1 == 0 ? 1 : 0)
-  // is 0 or not
-  *dest = (*src1)==0 ? 1 : 0;
+  // TODO();
+  if(*src1==0){
+    *dest=1;
+  }else{
+    *dest=0;
+  }
 }
 
 static inline void rtl_eqi(rtlreg_t* dest, const rtlreg_t* src1, int imm) {
   // dest <- (src1 == imm ? 1 : 0)
-  *dest = (*src1)==imm ? 1 : 0;
+  // TODO();
+  rtl_xori(dest,src1,imm);
+  rtl_eq0(dest,dest);
 }
 
 static inline void rtl_neq0(rtlreg_t* dest, const rtlreg_t* src1) {
   // dest <- (src1 != 0 ? 1 : 0)
-  *dest = (*src1)!=0 ? 1 : 0;
+  // TODO();
+  rtl_eq0(dest,src1);
+  rtl_eq0(dest,dest);
 }
 
 static inline void rtl_msb(rtlreg_t* dest, const rtlreg_t* src1, int width) {
-  // dest <- src1[width * 8 - 1]
-  *dest = (*src1 >> (width*8-1)) & 0x1;
+  // dest <- src1[width * 8 - 1]   只要这一位
+  rtl_shri(dest,src1,width*8-1);  //右移
+  rtl_andi(dest,dest,0x1);
 }
 
 static inline void rtl_update_ZF(const rtlreg_t* result, int width) {
   // eflags.ZF <- is_zero(result[width * 8 - 1 .. 0])
-  rtlreg_t tmp;
-	rtl_shli(&tmp, result, 32-width*8);
-	cpu.eflags.ZF = tmp == 0 ? 1 : 0;
+  cpu.ZF = ((~0u >> (32 - width * 8)) & *result) == 0;
 }
 
 static inline void rtl_update_SF(const rtlreg_t* result, int width) {
   // eflags.SF <- is_sign(result[width * 8 - 1 .. 0])
-  rtlreg_t tmp;
-	rtl_msb(&tmp, result, width);
-	cpu.eflags.SF = tmp;
+  rtl_msb(&t0,result,width);
+  rtl_set_SF(&t0);
 }
 
 static inline void rtl_update_ZFSF(const rtlreg_t* result, int width) {
