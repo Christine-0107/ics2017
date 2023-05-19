@@ -13,6 +13,7 @@ _Area segments[] = {      // Kernel memory mappings
 
 #define NR_KSEG_MAP (sizeof(segments) / sizeof(segments[0]))
 
+//准备内核页表
 void _pte_init(void* (*palloc)(), void (*pfree)(void*)) {
   palloc_f = palloc;
   pfree_f = pfree;
@@ -42,8 +43,8 @@ void _pte_init(void* (*palloc)(), void (*pfree)(void*)) {
     }
   }
 
-  set_cr3(kpdirs);
-  set_cr0(get_cr0() | CR0_PG);
+  set_cr3(kpdirs); //设置CR3寄存器存储页目录表基址
+  set_cr0(get_cr0() | CR0_PG); //设置CR0寄存器开启分页机制
 }
 
 void _protect(_Protect *p) {
