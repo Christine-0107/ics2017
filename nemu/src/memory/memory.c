@@ -65,9 +65,21 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  return paddr_read(addr, len);
+  if(PTE_ADDR(addr)!=PTE_ADDR(addr+len-1)){ //数据跨越了虚拟页边界
+    assert(0);
+  }
+  else{
+    paddr_t paddr = page_translate(addr,false);
+    return paddr_read(addr, len);
+  }
 }
 
 void vaddr_write(vaddr_t addr, int len, uint32_t data) {
-  paddr_write(addr, len, data);
+  if(PTE_ADDR(addr)!=PTE_ADDR(addr+len-1)){ //数据跨越了虚拟页边界
+    assert(0);
+  }
+  else{
+    paddr_t paddr = page_translate(addr,true);
+    return paddr_write(addr, len, data);
+  }
 }
