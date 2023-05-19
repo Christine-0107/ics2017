@@ -7,6 +7,19 @@
     guest_to_host(addr); \
     })
 
+//添加帮助地址转换的宏定义
+// +--------10------+-------10-------+---------12----------+
+// | Page Directory |   Page Table   | Offset within Page  |
+// |      Index     |      Index     |                     |
+// +----------------+----------------+---------------------+
+//  \--- PDX(va) --/ \--- PTX(va) --/\------ OFF(va) ------/
+#define PDX(va)     (((uint32_t)(va) >> 22) & 0x3ff)
+#define PTX(va)     (((uint32_t)(va) >> 12) & 0x3ff)
+#define OFF(va)     ((uint32_t)(va) & 0xfff)
+// Address in page table or page directory entry, 取高20位
+#define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
+
+
 uint8_t pmem[PMEM_SIZE];
 
 /* Memory accessing interfaces */
@@ -29,6 +42,26 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
   else{
     mmio_write(addr,len,data,flag);
   }
+}
+
+paddr_t page_translate(vaddr_t vaddr, bool flag) {
+  PDE pde;  //页目录表项
+  PDE *pdbase; //指向页目录表的基址
+  PTE pte; //页表表项
+  PTE *ptbase; //指向页表的基址
+  //当CR0的标志位标识保护模式和分页模式启动，才能进行操作
+  if(cpu.cr0.protect_enable && cpu.cr0.paging) {
+    pdbase = (PDE*)(PTE_ADDR(cpu.cr3.val)); //找到页目录表基址
+    pde.val = paddr_read((paddr_t)&pdbase[PDX(vaddr)], 4); //PDX()找到页目录表偏移
+    assert(pde.present); //检查present标志位
+    pde.accessed = true; //设置访问标志位
+    ptbase = (PTE*)(PTE_ADDR(pde.val)); //找到页表的基址
+    pte.val = paddr_read((paddr_t)&ptbase[PTX(vaddr)], 4); //PTX()找到页表偏移
+    assert(pte.present); //检查present标志位
+    pte.dirty = flag ? 1 : pte.dirty; //设置写
+    return PTE_ADDR(pte.val) | OFF(vaddr);
+  }
+  return vaddr;
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
