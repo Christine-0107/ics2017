@@ -54,7 +54,7 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
   //当CR0的标志位标识保护模式和分页模式启动，才能进行操作
   //cpu.cr0.protect_enable && cpu.cr0.paging
   //cpu.cr0.protect_enable
-  if(cpu.cr0.paging) {
+  if(cpu.cr0.protect_enable && cpu.cr0.paging) {
     pdbase = (PDE*)(PTE_ADDR(cpu.cr3.val)); //找到页目录表基址
     pde.val = paddr_read((paddr_t)&pdbase[PDX(vaddr)], 4); //PDX()找到页目录表偏移
     assert(pde.present); //检查present标志位
@@ -66,8 +66,7 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
     pte.dirty = flag ? 1 : pte.dirty; //设置写
     return PTE_ADDR(pte.val) | OFF(vaddr);
   }
-  //printf("%d\n",m++);
-  return vaddr;
+  return vaddr-1;
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
