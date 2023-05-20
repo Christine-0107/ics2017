@@ -72,7 +72,6 @@ uint32_t vaddr_read(vaddr_t addr, int len) {
     uint32_t ret = 0;
     for(int i=0; i<len; i++){
       paddr_t paddr = page_translate(addr+i, false);
-      printf("Error\n");
       ret += paddr_read(paddr, 1) << (8 * i);
     }
     return ret;
