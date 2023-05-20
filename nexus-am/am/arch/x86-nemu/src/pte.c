@@ -111,13 +111,4 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   memcpy(ptf,(void*)&tf,sizeof(_RegSet));
 
   return (_RegSet*)ptf;
-  /*uint32_t *tmp = ustack.end;
-  // general reg8, eflags, cs, eip, error code, irq, general reg8
-  uint32_t rem[30] = {0,0,0,0,0,0,0,0,0x202,0x8,(uint32_t)entry, 0x0, 0x81, 0,0,0,0,0,0,0,0};
-  for(int i=0; i<(8+5+8); i++){
-    *tmp = rem[i];
-    tmp--;
-  }
-  tmp++;
-  return (_RegSet*) (tmp);*/
 }
