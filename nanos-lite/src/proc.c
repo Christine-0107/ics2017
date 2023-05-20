@@ -19,9 +19,13 @@ void load_prog(const char *filename) {
   printf("loader end.\n");
 
   // TODO: remove the following three lines after you have implemented _umake()
+  printf("switch begin.\n");
   _switch(&pcb[i].as);
+  printf("switch end.\n");
   current = &pcb[i];
+  printf("entry begin.\n");
   ((void (*)(void))entry)();
+  printf("entry end.\n");
 
   _Area stack;
   stack.start = pcb[i].stack;
