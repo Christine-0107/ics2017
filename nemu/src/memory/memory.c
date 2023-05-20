@@ -45,7 +45,6 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
   }
 }
 
-int m=0;
 paddr_t page_translate(vaddr_t vaddr, bool flag) {
   PDE pde;  //页目录表项
   PDE *pdbase; //指向页目录表的基址
@@ -66,7 +65,7 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
     pte.dirty = flag ? 1 : pte.dirty; //设置写
     return PTE_ADDR(pte.val) | OFF(vaddr);
   }
-  return vaddr-1;
+  return vaddr;
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {

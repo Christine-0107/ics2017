@@ -152,7 +152,7 @@ static inline void rtl_sext(rtlreg_t* dest, const rtlreg_t* src1, int width) {
 static inline void rtl_push(const rtlreg_t* src1) {
   // esp <- esp - 4
   // M[esp] <- src1
-  rtl_subi(&cpu.esp,&cpu.esp,4);    //抬高栈顶cpu.esp。32bit
+  cpu.esp=cpu.esp-4;   //抬高栈顶cpu.esp。32bit
   rtl_sm(&cpu.esp,4,src1);          //写入内存
 }
 
