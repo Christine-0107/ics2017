@@ -8,6 +8,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
 
   //TODO();
   rtl_push(&cpu.eflags);
+  cpu.IF=0;
   rtl_push(&cpu.cs);
   rtl_push(&ret_addr);
   assert(NO*sizeof(GateDesc)<=cpu.idtr.limit);
@@ -18,5 +19,7 @@ void raise_intr(uint8_t NO, vaddr_t ret_addr) {
   decoding.is_jmp=1;
 }
 
+//将INTR引脚置位高电平
 void dev_raise_intr() {
+  cpu.INTR=true;
 }
