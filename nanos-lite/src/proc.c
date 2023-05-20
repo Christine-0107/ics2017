@@ -10,9 +10,13 @@ uintptr_t loader(_Protect *as, const char *filename);
 
 void load_prog(const char *filename) {
   int i = nr_proc ++;
+  printf("protect begin.\n");
   _protect(&pcb[i].as);
+  printf("protect end.\n");
 
+  printf("loader begin.\n");
   uintptr_t entry = loader(&pcb[i].as, filename);
+  printf("loader end.\n");
 
   // TODO: remove the following three lines after you have implemented _umake()
   _switch(&pcb[i].as);
