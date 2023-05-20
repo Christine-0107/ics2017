@@ -5,9 +5,17 @@ void diff_test_skip_nemu();
 
 make_EHelper(lidt) {
   //TODO();
-  t1=id_dest->val; //data数组的地址
+  /*t1=id_dest->val; //data数组的地址
   cpu.idtr.limit = vaddr_read(t1, 2); // 读取data[0]为idtr.limit
   cpu.idtr.base = vaddr_read(t1 + 2, 4); // 读取data[1]、data[2]为idtr.base, 32bit
+  print_asm_template1(lidt);*/
+  cpu.idtr.limit=vaddr_read(id_dest->addr,2); //limit读取16位
+  if(decoding.is_operand_size_16){
+    cpu.idtr.base=vaddr_read(id_dest->addr+2,3); //base24
+  }
+  else{
+    cpu.idtr.base=vaddr_read(id_dest->addr+2,4); //base32
+  }
   print_asm_template1(lidt);
 }
 
