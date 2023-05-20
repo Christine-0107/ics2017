@@ -32,8 +32,8 @@ _RegSet* schedule(_RegSet *prev) {
   //return NULL;
   if(current!=NULL)
     current->tf=prev; //保存上下文指针
-  //current=&pcb[0];
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]); //轮流调度两个进程
+  current=&pcb[0];
+  //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]); //轮流调度两个进程
   Log("PTR=0x%x\n",(uint32_t)current->as.ptr);
   _switch(&current->as);
   return current->tf;
