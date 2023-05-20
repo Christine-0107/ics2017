@@ -48,10 +48,7 @@ uintptr_t loader(_Protect *as, const char *filename) {
 
     va += PGSIZE;
     f_size -= PGSIZE;
-    // Log("f_size remaining:%d..",f_size);
   }
-  // fs_read(fd, (void*)DEFAULT_ENTRY, f_size);
-  // Log("read finish in loader..");
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
 }

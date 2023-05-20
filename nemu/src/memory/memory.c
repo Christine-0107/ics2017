@@ -59,6 +59,7 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
     ptbase = (PTE*)(PTE_ADDR(pde.val)); //找到页表的基址
     pte.val = paddr_read((paddr_t)&ptbase[PTX(vaddr)], 4); //PTX()找到页表偏移
     assert(pte.present); //检查present标志位
+    pte.accessed = true;
     pte.dirty = flag ? 1 : pte.dirty; //设置写
     return PTE_ADDR(pte.val) | OFF(vaddr);
   }
