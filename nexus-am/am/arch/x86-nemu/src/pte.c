@@ -1,4 +1,6 @@
 #include <x86.h>
+#include <assert.h>
+#include <stdio.h>
 
 #define PG_ALIGN __attribute((aligned(PGSIZE)))
 
@@ -71,8 +73,8 @@ void _switch(_Protect *p) {
 void _map(_Protect *p, void *va, void *pa) {
   //首先需要判断虚拟地址中的偏移值和物理地址中的偏移值是否相同
   if(OFF(va) || OFF(pa)){
-    print("Error: va.off!=pa.off\n");
-    assert(0);
+    printf("Error: va.off!=pa.off\n");
+    return;
   }
   PDE* pdbase=(PDE*)p->ptr; //页目录表的基地址
   PTE* ptbase=NULL; //指向页表表项
