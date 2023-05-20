@@ -47,9 +47,10 @@ void _pte_init(void* (*palloc)(), void (*pfree)(void*)) {
   set_cr0(get_cr0() | CR0_PG); //设置CR0寄存器开启分页机制
 }
 
+//创建一个进程的虚拟地址空间
 void _protect(_Protect *p) {
   PDE *updir = (PDE*)(palloc_f());
-  p->ptr = updir;
+  p->ptr = updir; //p->ptr可以获取页目录表的基地址
   // map kernel space
   for (int i = 0; i < NR_PDE; i ++) {
     updir[i] = kpdirs[i];
@@ -66,7 +67,23 @@ void _switch(_Protect *p) {
   set_cr3(p->ptr);
 }
 
+//提供映射一页的功能，将虚拟地址空间p中的虚拟地址va映射到物理地址pa
 void _map(_Protect *p, void *va, void *pa) {
+  //首先需要判断虚拟地址中的偏移值和物理地址中的偏移值是否相同
+  if(OFF(va) || OFF(pa)){
+    print("Error: va.off!=pa.off\n");
+    assert(0);
+  }
+  PDE* pdbase=(PDE*)p->ptr; //页目录表的基地址
+  PTE* ptbase=NULL; //指向页表表项
+  PDE* pde=pdbase+PDX(va); //指向页目录表项
+  if(!(*pde&PTE_P)){ //若页表项不存在
+    ptbase=(PTE*)(palloc_f()); //分配一项
+    *pde=PTE_ADDR(ptbase)|PTE_P;
+  }
+  ptbase=(PTE*)PTE_ADDR(*pde);
+  PTE* pte=ptbase+PTX(va);
+  *pte=PTE_ADDR(pa)|PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
