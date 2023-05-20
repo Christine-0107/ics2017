@@ -72,20 +72,15 @@ void _switch(_Protect *p) {
 //提供映射一页的功能，将虚拟地址空间p中的虚拟地址va映射到物理地址pa
 void _map(_Protect *p, void *va, void *pa) {
   //首先需要判断虚拟地址中的偏移值和物理地址中的偏移值是否相同
-  if(OFF(va) || OFF(pa)){
-    printf("Error: va.off!=pa.off\n");
-    return;
-  }
-  PDE* pdbase=(PDE*)p->ptr; //页目录表的基地址
-  PTE* ptbase=NULL; //指向页表表项
-  PDE* pde=pdbase+PDX(va); //指向页目录表项
-  if(!(*pde&PTE_P)){ //若页表项不存在
-    ptbase=(PTE*)(palloc_f()); //分配一项
-    *pde=PTE_ADDR(ptbase)|PTE_P;
-  }
-  ptbase=(PTE*)PTE_ADDR(*pde);
-  PTE* pte=ptbase+PTX(va);
-  *pte=PTE_ADDR(pa)|PTE_P;
+  PDE *pde = &((PDE*)(p->ptr))[PDX(va)];
+	PTE *pgtab;
+	if (*pde & PTE_P) {
+		pgtab = (PTE *)PTE_ADDR(*pde);
+	} else {
+		pgtab = (PTE *)palloc_f();
+		*pde = PTE_ADDR(pgtab) | PTE_P;
+	}
+	pgtab[PTX(va)] = PTE_ADDR(pa) | PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
