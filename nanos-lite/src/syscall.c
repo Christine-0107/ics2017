@@ -26,8 +26,10 @@ int sys_write(int fd,void *buf,size_t len){
   return -1;
 }
 
+extern int mm_brk(uint32_t new_brk);
 int sys_brk(int addr){
-  return 0;
+  //return 0;
+  return mm_brk(addr);
 }
 
 int sys_read(int fd,void *buf,size_t len){
