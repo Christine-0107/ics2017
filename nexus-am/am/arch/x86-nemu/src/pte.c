@@ -91,6 +91,7 @@ void _map(_Protect *p, void *va, void *pa) {
 void _unmap(_Protect *p, void *va) {
 }
 
+//用来创建用户进程现场
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   return NULL;
 }
