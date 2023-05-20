@@ -13,7 +13,7 @@ typedef struct {
 #define EX(ex)             EXW(ex, 0)
 #define EMPTY              EX(inv)
 //时钟中断号
-#define TIMER_IRQ 32
+#define TIMER_IRQ 0x32
 
 static inline void set_width(int width) {
   if (width == 0) {
