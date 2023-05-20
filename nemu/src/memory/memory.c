@@ -66,7 +66,7 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
-  if(PTE_ADDR(addr)!=PTE_ADDR(addr+len-1)){ //数据跨越了虚拟页边界
+  if(((addr + len - 1) & ~PAGE_MASK) != (addr & ~ PAGE_MASK)){ //数据跨越了虚拟页边界
     //printf("Error: the data passes tow pages\n");
     //assert(0);
     uint32_t ret = 0;
