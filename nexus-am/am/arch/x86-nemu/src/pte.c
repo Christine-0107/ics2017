@@ -95,7 +95,7 @@ extern void* memcpy(void*,const void*,int);
 //用来创建用户进程现场
 _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *const argv[], char *const envp[]) {
   //return NULL;
-  int arg1=0;
+  /*int arg1=0;
   char* arg2=NULL;
   memcpy((void*)ustack.end-4, (void*)arg2, 4);
   memcpy((void*)ustack.end-8, (void*)arg2, 4);
@@ -110,5 +110,14 @@ _RegSet *_umake(_Protect *p, _Area ustack, _Area kstack, void *entry, char *cons
   void* ptf=(void*)(ustack.end-16-sizeof(_RegSet));
   memcpy(ptf,(void*)&tf,sizeof(_RegSet));
 
-  return (_RegSet*)ptf;
+  return (_RegSet*)ptf;*/
+  uint32_t *tmp = ustack.end;
+  // general reg8, eflags, cs, eip, error code, irq, general reg8
+  uint32_t rem[30] = {0,0,0,0,0,0,0,0,0x202,0x8,(uint32_t)entry, 0x0, 0x81, 0,0,0,0,0,0,0,0};
+  for(int i=0; i<(8+5+8); i++){
+    *tmp = rem[i];
+    tmp--;
+  }
+  tmp++;
+  return (_RegSet*) (tmp);
 }
