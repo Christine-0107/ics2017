@@ -55,7 +55,7 @@ void _protect(_Protect *p) {
   p->ptr = updir; //p->ptr可以获取页目录表的基地址
   // map kernel space
   for (int i = 0; i < NR_PDE; i ++) {
-    //updir[i] = kpdirs[i];
+    updir[i] = kpdirs[i];
   }
 
   p->area.start = (void*)0x8000000;
