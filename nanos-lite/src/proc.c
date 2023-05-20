@@ -36,7 +36,7 @@ _RegSet* schedule(_RegSet *prev) {
   //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]); //轮流调度两个进程
   //设置频率
   static int num=0;
-  static const int freq=1000;
+  static const int freq=10;
   if(current==&pcb[0]){
     num++;
   }
