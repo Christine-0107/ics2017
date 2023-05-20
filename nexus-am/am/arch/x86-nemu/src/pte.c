@@ -81,11 +81,11 @@ void _map(_Protect *p, void *va, void *pa) {
   PDE* pde=pdbase+PDX(va); //指向页目录表项
   if(!(*pde&PTE_P)){ //若页表项不存在
     ptbase=(PTE*)(palloc_f()); //分配一项
-    *pde=PTE_ADDR(ptbase)|PTE_P;
+    *pde=(uintptr_t)ptbase|PTE_P;
   }
   ptbase=(PTE*)PTE_ADDR(*pde);
   PTE* pte=ptbase+PTX(va);
-  *pte=PTE_ADDR(pa)|PTE_P;
+  *pte=(uintptr_t)pa|PTE_P;
 }
 
 void _unmap(_Protect *p, void *va) {
