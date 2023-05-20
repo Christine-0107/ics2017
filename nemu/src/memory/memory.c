@@ -18,8 +18,7 @@
 #define OFF(va)     ((uint32_t)(va) & 0xfff)
 // Address in page table or page directory entry, 取高20位
 #define PTE_ADDR(pte)   ((uint32_t)(pte) & ~0xfff)
-#define REMOVE_OFFSET(pte) ((uint32_t)(pte) & 0xfffff000)
-#define OFFSET(va) (((uint32_t)(va) >> 0) & 0x0fff)
+
 
 
 uint8_t pmem[PMEM_SIZE];
@@ -47,43 +46,35 @@ void paddr_write(paddr_t addr, int len, uint32_t data) {
 }
 
 paddr_t page_translate(vaddr_t vaddr, bool flag) {
-  PDE pde;
-  PDE *pgdir;
-  PTE pte;
-  PTE *ptdir;
-  if(cpu.cr0.protect_enable && cpu.cr0.paging){
-    pgdir = (PDE*)(REMOVE_OFFSET(cpu.cr3.val));
-    pde.val = paddr_read((paddr_t)&pgdir[PDX(vaddr)], 4);
-    // printf("%x %d\n", pde, pde.present);
-    assert(pde.present);
-    pde.accessed = true;
-
-    ptdir = (PTE*)(REMOVE_OFFSET(pde.val));
-    pte.val = paddr_read((paddr_t)&ptdir[PTX(vaddr)], 4);
-    assert(pte.present);
-    pte.accessed = true;
-    pte.dirty = flag ? 1 : pte.dirty;
-
-    return REMOVE_OFFSET(pte.val) | OFFSET(vaddr);
+  PDE pde;  //页目录表项
+  PDE *pdbase; //指向页目录表的基址
+  PTE pte; //页表表项
+  PTE *ptbase; //指向页表的基址
+  //当CR0的标志位标识保护模式和分页模式启动，才能进行操作
+  if(cpu.cr0.protect_enable && cpu.cr0.paging) {
+    pdbase = (PDE*)(PTE_ADDR(cpu.cr3.val)); //找到页目录表基址
+    pde.val = paddr_read((paddr_t)&pdbase[PDX(vaddr)], 4); //PDX()找到页目录表偏移
+    assert(pde.present); //检查present标志位
+    pde.accessed = true; //设置访问标志位
+    ptbase = (PTE*)(PTE_ADDR(pde.val)); //找到页表的基址
+    pte.val = paddr_read((paddr_t)&ptbase[PTX(vaddr)], 4); //PTX()找到页表偏移
+    assert(pte.present); //检查present标志位
+    pte.dirty = flag ? 1 : pte.dirty; //设置写
+    return PTE_ADDR(pte.val) | OFF(vaddr);
   }
-  else{
-    return vaddr;
-  }
+  return vaddr;
 }
 
 uint32_t vaddr_read(vaddr_t addr, int len) {
   if(PTE_ADDR(addr)!=PTE_ADDR(addr+len-1)){ //数据跨越了虚拟页边界
     //printf("Error: the data passes tow pages\n");
     //assert(0);
-    int len1 = 0x1000-OFF(addr);
-    int len2 = len-len1;
-    paddr_t paddr1 = page_translate(addr, false);
-    paddr_t paddr2 = page_translate(addr+len1, false);
-
-    uint32_t low = paddr_read(paddr1,len1);
-    uint32_t high = paddr_read(paddr2,len2);
-    uint32_t result = high<<(len1*8) | low;
-    return result;
+    uint32_t ret = 0;
+    for(int i=0; i<len; i++){
+      paddr_t paddr = page_translate(addr+i, false);
+      ret += paddr_read(paddr, 1) << (8 * i);
+    }
+    return ret;
   }
   else{
     paddr_t paddr = page_translate(addr,false);
