@@ -33,7 +33,20 @@ _RegSet* schedule(_RegSet *prev) {
   if(current!=NULL)
     current->tf=prev; //保存上下文指针
   //current=&pcb[0];
-  current = (current == &pcb[0] ? &pcb[1] : &pcb[0]); //轮流调度两个进程
+  //current = (current == &pcb[0] ? &pcb[1] : &pcb[0]); //轮流调度两个进程
+  //设置频率
+  static int num=0;
+  static const int freq=1000;
+  if(current==&pcb[0]){
+    num++;
+  }
+  else{
+    current=&pcb[0];
+  }
+  if(num==freq){
+    current=&pcb[1];
+    num=0;
+  }
   Log("PTR=0x%x\n",(uint32_t)current->as.ptr);
   _switch(&current->as);
   return current->tf;
