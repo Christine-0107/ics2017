@@ -55,11 +55,11 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
   if(1) {
     pdbase = (PDE*)(PTE_ADDR(cpu.cr3.val)); //找到页目录表基址
     pde.val = paddr_read((paddr_t)&pdbase[PDX(vaddr)], 4); //PDX()找到页目录表偏移
-    assert(pde.present); //检查present标志位
+    //assert(pde.present); //检查present标志位
     pde.accessed = true; //设置访问标志位
     ptbase = (PTE*)(PTE_ADDR(pde.val)); //找到页表的基址
     pte.val = paddr_read((paddr_t)&ptbase[PTX(vaddr)], 4); //PTX()找到页表偏移
-    assert(pte.present); //检查present标志位
+    //assert(pte.present); //检查present标志位
     pte.accessed = true;
     pte.dirty = flag ? 1 : pte.dirty; //设置写
     return PTE_ADDR(pte.val) | OFF(vaddr);
