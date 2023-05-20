@@ -4,7 +4,7 @@
 
 static PCB pcb[MAX_NR_PROC];
 static int nr_proc = 0;
-PCB *current = NULL;
+PCB *current = NULL; //记录当前正在运行哪一个进程，指向当前进程的PCB
 
 uintptr_t loader(_Protect *as, const char *filename);
 
@@ -27,6 +27,13 @@ void load_prog(const char *filename) {
   pcb[i].tf = _umake(&pcb[i].as, stack, stack, (void *)entry, NULL, NULL);
 }
 
+//完成进程调度
 _RegSet* schedule(_RegSet *prev) {
-  return NULL;
+  //return NULL;
+  if(current!=NULL)
+    current->tf=prev; //保存上下文指针
+  current=&pcb[0];
+  Log("PTR=0x%x\n",(uint32_t)current->as.ptr);
+  _switch(&current->as);
+  return current->tf;
 }
