@@ -51,7 +51,8 @@ paddr_t page_translate(vaddr_t vaddr, bool flag) {
   PTE pte; //页表表项
   PTE *ptbase; //指向页表的基址
   //当CR0的标志位标识保护模式和分页模式启动，才能进行操作
-  if(cpu.cr0.protect_enable && cpu.cr0.paging) {
+  //cpu.cr0.protect_enable && cpu.cr0.paging
+  if(1) {
     pdbase = (PDE*)(PTE_ADDR(cpu.cr3.val)); //找到页目录表基址
     pde.val = paddr_read((paddr_t)&pdbase[PDX(vaddr)], 4); //PDX()找到页目录表偏移
     assert(pde.present); //检查present标志位
