@@ -35,9 +35,7 @@ int main() {
   //uint32_t entry = loader(NULL, "/bin/pal");
   //uint32_t entry = loader(NULL, "/bin/pal");
   //((void (*)(void))entry)();
-  printf("load begin.\n");
   load_prog("/bin/dummy");
-  printf("load end.\n");
 
   panic("Should not reach here");
 }
