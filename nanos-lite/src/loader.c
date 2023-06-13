@@ -29,7 +29,7 @@ extern void* new_page(void);
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
 }*/
-/*uintptr_t loader(_Protect *as, const char *filename) {
+uintptr_t loader(_Protect *as, const char *filename) {
   // size_t size = get_ramdisk_size();
   // // printf("size:%d\n",size);
   // ramdisk_read((void *)DEFAULT_ENTRY, 0, size); 
@@ -51,21 +51,4 @@ extern void* new_page(void);
   }
   fs_close(fd);
   return (uintptr_t)DEFAULT_ENTRY;
-}*/
-uintptr_t loader(_Protect *as, const char *filename) {
-
-    Log("%s",filename);
-    int fd=fs_open(filename,0,0);
-    size_t size=fs_filesz(fd);
-//      fs_read(fd,DEFAULT_ENTRY,size);
- 	void *va,*pa;
-	va=DEFAULT_ENTRY;
-	for(;va<size+DEFAULT_ENTRY;va+=PGSIZE){
-	pa=new_page();
-    Log("%x:%x",(uint32_t)pa,(uint32_t)va);
-	_map(as,va,pa);
-	fs_read(fd,pa,PGSIZE);
-	}
-		
-    return (uintptr_t)DEFAULT_ENTRY;
 }
