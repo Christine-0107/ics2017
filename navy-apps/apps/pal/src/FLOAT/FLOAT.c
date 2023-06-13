@@ -33,6 +33,16 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
   return res;
 }
 
+//定义IEEE 754单精度浮点数的表示形式
+union floatu {
+  struct{
+    uint32_t man : 23; //尾数部分
+    uint32_t exp : 8; //指数部分
+    uint32_t sign : 1; //符号
+  };
+  uint32_t value;
+};
+
 FLOAT f2F(float a) {
   /* You should figure out how to convert `a' into FLOAT without
    * introducing x87 floating point instructions. Else you can
@@ -43,8 +53,21 @@ FLOAT f2F(float a) {
    * stack. How do you retrieve it to another variable without
    * performing arithmetic operations on it directly?
    */
-
-  assert(0);
+  union floatu f;
+  f.value = *((uint32_t*)(void*)&a);
+  int exp = f.exp - 127; //IEEE 754单精度浮点数保存时有偏移值127
+  FLOAT res = 0;
+  assert(exp!=128);
+  if(exp >= 0){
+    int mov = 7 - exp;
+    if(mov >= 0){
+      res = (f.man | (1<<23)) >> mov;
+    }
+    else{
+      res = (f.man | (1<<23)) << (-mov);
+    }
+    return f.sign == 0 ? res : -res;
+  }
   return 0;
 }
 
