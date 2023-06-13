@@ -39,16 +39,18 @@ void init_fs() {
 
 
 
-int fs_open(const char *path,int flag,int mode){
-	Log("%s",path);
-	for(int i=0;i<NR_FILES;i++){
-		if(strcmp(path,file_table[i].name)==0){
-			//file_table[i].open_offset=0;
-			return i;
-		}
-	}
-	assert(0);
-	return -1;	
+//打开文件
+int fs_open(const char *pathname, int flags, int mode) {
+  Log("%s",pathname);
+  for(int i = 0; i < NR_FILES; i++){
+    //Log("filename: %s",file_table[i].name);
+    if(strcmp(file_table[i].name, pathname) == 0){
+      file_table[i].open_offset=0;
+      return i;
+    }
+  }
+  panic("The file indicated by pathname was not found.\n");
+  return -1;
 }
 
 
