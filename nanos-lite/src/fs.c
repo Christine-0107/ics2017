@@ -121,6 +121,7 @@ off_t fs_lseek(int fd,off_t offset,int whence){
 }
 
 
-
-
-
+int fs_close(int fd) {
+  assert(fd>=0&&fd<NR_FILES);
+  return 0;
+}
