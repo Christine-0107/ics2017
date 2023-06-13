@@ -22,11 +22,19 @@ static Finfo file_table[] __attribute__((used)) = {
 
 #define NR_FILES (sizeof(file_table) / sizeof(file_table[0]))
 
-extern _Screen _screen;
+/*extern _Screen _screen;
 void init_fs() {
   // TODO: initialize the size of /dev/fb
 	///3
 	file_table[FD_FB].size=4*_screen.height*_screen.width;
+}*/
+
+extern void getScreen(int* width, int* height);
+void init_fs() {
+  // TODO: initialize the size of /dev/fb
+  int width=0,height=0;
+  getScreen(&width,&height);
+  file_table[FD_FB].size=width*height*sizeof(uint32_t);
 }
 
 
@@ -35,7 +43,7 @@ int fs_open(const char *path,int flag,int mode){
 	Log("%s",path);
 	for(int i=0;i<NR_FILES;i++){
 		if(strcmp(path,file_table[i].name)==0){
-			file_table[i].open_offset=0;
+			//file_table[i].open_offset=0;
 			return i;
 		}
 	}
@@ -51,27 +59,7 @@ size_t fs_filesz(int fd){
 extern void dispinfo_read(void *buf, off_t offset, size_t len);
 extern void ramdisk_read(void*,off_t,size_t);
 extern size_t events_read(void *buf, size_t len);
-/*ssize_t fs_read(int fd,void *buf,size_t count){
-    off_t open_offset=file_table[fd].open_offset;
-	size_t size=file_table[fd].size;	
-	if(fd==FD_DISPINFO){
-		count=(open_offset+count)<=size?count:size-open_offset;
-		dispinfo_read(buf,open_offset,count);
-		//Log("%s",buf);
-		file_table[5].open_offset+=count;
-		return count;
-        }
-	if(fd==	FD_EVENTS){
-	return events_read(buf,count);
-	}
-	count=(open_offset+count)<=size?count:size-open_offset;
-	//Log("%d",count);
-	//Log("%d",size);	
-	ramdisk_read(buf,file_table[fd].disk_offset+open_offset,count);
-	file_table[fd].open_offset=count+open_offset;
-	return count;	
-	
-}*/
+
 ssize_t fs_read(int fd, void *buf, size_t len) {
   assert(fd>=0&&fd<NR_FILES);
   ssize_t size = file_table[fd].size;
