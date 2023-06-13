@@ -3,13 +3,34 @@
 #include <assert.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  //结果除以2^16
+  FLOAT res = (int64_t)a * (int64_t)b;
+  res = res >> 16;
+  return res;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  //1.先不管符号位，当作正数计算。
+  assert(b!=0);
+  FLOAT aa = Fabs(a);
+  FLOAT bb = Fabs(b);
+  //2.计算整数部分的商和余数。
+  FLOAT res = aa / bb;
+  FLOAT remain = aa % bb;
+  //3.计算小数部分的商
+  for(int i=0;i<16;i++){
+    remain << 1;
+    res << 1;
+    if(remain >= bb){
+      remain -= bb;
+      res++;
+    }
+  }
+  //4.添加符号位
+  if(((a ^ b) & 0x80000000) == 0x80000000){
+    res = -res;
+  }
+  return res;
 }
 
 FLOAT f2F(float a) {
@@ -28,8 +49,12 @@ FLOAT f2F(float a) {
 }
 
 FLOAT Fabs(FLOAT a) {
-  assert(0);
-  return 0;
+  if(a > 0){
+    return a;
+  }
+  else{
+    return -a;
+  }
 }
 
 /* Functions below are already implemented */
