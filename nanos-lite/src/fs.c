@@ -102,7 +102,7 @@ ssize_t fs_write(int fd,void*buf,size_t count){
 }
 
 
-off_t fs_lseek(int fd,off_t offset,int whence){
+/*off_t fs_lseek(int fd,off_t offset,int whence){
 	switch(whence){
 		case SEEK_SET:
 				file_table[fd].open_offset=offset;
@@ -118,6 +118,35 @@ off_t fs_lseek(int fd,off_t offset,int whence){
 				break;	
 		default:return offset-1;
 	}
+}*/
+
+off_t fs_lseek(int fd, off_t offset, int whence){
+  assert(fd>=0&&fd<NR_FILES);
+  ssize_t size = file_table[fd].size;
+  switch (whence) {
+    case SEEK_SET:
+      if (offset >= 0)
+        file_table[fd].open_offset = offset <= size ? offset : size;
+      else
+        return -1;
+      break;
+    case SEEK_CUR:
+      if (offset >= 0)
+        file_table[fd].open_offset = file_table[fd].open_offset + offset <= size ? file_table[fd].open_offset + offset : size;
+      else 
+        file_table[fd].open_offset = file_table[fd].open_offset + offset >= 0 ? file_table[fd].open_offset + offset : 0;
+      break;
+    case SEEK_END:
+      if (offset <= 0)
+        file_table[fd].open_offset = size + offset >= 0 ? size + offset : 0;
+      else
+        return -1;
+      break;
+    default:
+      panic("Unhandled whence ID.\n");
+      return -1;
+  }
+  return file_table[fd].open_offset;
 }
 
 
