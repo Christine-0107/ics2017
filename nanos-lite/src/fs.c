@@ -75,7 +75,7 @@ ssize_t fs_read(int fd,void *buf,size_t count){
 
 extern void fb_write(const void *buf, off_t offset, size_t len);
 extern void ramdisk_write(const void*,off_t,size_t);
-ssize_t fs_write(int fd,void*buf,size_t count){
+/*ssize_t fs_write(int fd,void*buf,size_t count){
    	off_t open_offset=file_table[fd].open_offset;
 	size_t size=file_table[fd].size;
 	if(fd==1||fd==2){
@@ -99,26 +99,31 @@ ssize_t fs_write(int fd,void*buf,size_t count){
 		
 	
 	}
-}
-
-
-/*off_t fs_lseek(int fd,off_t offset,int whence){
-	switch(whence){
-		case SEEK_SET:
-				file_table[fd].open_offset=offset;
-				return offset;
-				break;
-		case SEEK_CUR:
-				file_table[fd].open_offset+=offset;
-				return file_table[fd].open_offset;
-				break;
-		case SEEK_END:
-				file_table[fd].open_offset=offset+file_table[fd].size;
-				return file_table[fd].open_offset;
-				break;	
-		default:return offset-1;
-	}
 }*/
+ssize_t fs_write(int fd, const void *buf, size_t len){
+  assert(fd>=0&&fd<NR_FILES);
+  ssize_t size = file_table[fd].size;
+  switch(fd) {
+    case FD_STDIN:
+    case FD_STDOUT:
+    case FD_STDERR:
+      Log("Invalid fd.\n");
+      return 0;
+    case FD_DISPINFO:
+      Log("fd==FD_DISPINFO.\n");
+      return 0;
+    case FD_FB:
+      fb_write(buf, file_table[fd].open_offset, len);
+      file_table[fd].open_offset += len;
+      return len;
+    default:
+      if (file_table[fd].open_offset + len > size)
+        len = size - file_table[fd].open_offset;
+      ramdisk_write(buf, file_table[fd].open_offset + file_table[fd].disk_offset, len);
+      file_table[fd].open_offset += len;
+      return len;
+  }
+}
 
 off_t fs_lseek(int fd, off_t offset, int whence){
   assert(fd>=0&&fd<NR_FILES);
