@@ -51,7 +51,7 @@ size_t fs_filesz(int fd){
 extern void dispinfo_read(void *buf, off_t offset, size_t len);
 extern void ramdisk_read(void*,off_t,size_t);
 extern size_t events_read(void *buf, size_t len);
-ssize_t fs_read(int fd,void *buf,size_t count){
+/*ssize_t fs_read(int fd,void *buf,size_t count){
     off_t open_offset=file_table[fd].open_offset;
 	size_t size=file_table[fd].size;	
 	if(fd==FD_DISPINFO){
@@ -71,35 +71,37 @@ ssize_t fs_read(int fd,void *buf,size_t count){
 	file_table[fd].open_offset=count+open_offset;
 	return count;	
 	
+}*/
+ssize_t fs_read(int fd, void *buf, size_t len) {
+  assert(fd>=0&&fd<NR_FILES);
+  ssize_t size = file_table[fd].size;
+  if(file_table[fd].open_offset + len > size)
+    len = size - file_table[fd].open_offset;
+  switch(fd) {
+    case FD_STDIN:
+    case FD_STDOUT:
+    case FD_STDERR:
+      Log("Invalid fd.\n");
+      return 0;
+    case FD_FB:
+      Log("fd==FD_FB.\n");
+      return 0;
+    case FD_DISPINFO:
+      dispinfo_read(buf, file_table[fd].open_offset, len);
+      file_table[fd].open_offset += len;
+      return len;
+    case FD_EVENTS:
+      return events_read(buf, len);
+    default:
+      ramdisk_read(buf, file_table[fd].open_offset + file_table[fd].disk_offset, len);
+      file_table[fd].open_offset += len;
+      return len;
+  }
 }
 
 extern void fb_write(const void *buf, off_t offset, size_t len);
 extern void ramdisk_write(const void*,off_t,size_t);
-/*ssize_t fs_write(int fd,void*buf,size_t count){
-   	off_t open_offset=file_table[fd].open_offset;
-	size_t size=file_table[fd].size;
-	if(fd==1||fd==2){
-		char*temp=(char*)buf;
-		for(int i=0;i<count;i++){
-		_putc(*(temp+i));
-		}
-		return count;	
-	}
-        else if(fd==FD_FB){
-	      count=(open_offset+count)<=size?count:size-open_offset;	
-              fb_write(buf,open_offset,count);
-	      file_table[3].open_offset=open_offset+count;
-              return count;	
-	}
-	else{
-     count=(open_offset+count)<=size?count:size-open_offset;		
-	 ramdisk_write(buf,file_table[fd].disk_offset+open_offset,count);
-		file_table[fd].open_offset=open_offset+count;
-		return count;			
-		
-	
-	}
-}*/
+
 ssize_t fs_write(int fd, const void *buf, size_t len){
   assert(fd>=0&&fd<NR_FILES);
   ssize_t size = file_table[fd].size;
