@@ -7,14 +7,19 @@ typedef int FLOAT;
 
 static inline int F2int(FLOAT a) {
   //取整数位即可
-  int res = a & 0xffff0000;
-  res = res >> 16;
-  return res;
+  //要考虑符号问题
+  if ((a & 0x80000000) == 0)
+    return a >> 16;
+  else
+    return -((-a) >> 16);
 }
 
 static inline FLOAT int2F(int a) {
   //整数放在高16位即可
-  return a << 16;
+  if ((a & 0x80000000) == 0)
+    return a << 16;
+  else
+    return -((-a) << 16);
 }
 
 static inline FLOAT F_mul_int(FLOAT a, int b) {
