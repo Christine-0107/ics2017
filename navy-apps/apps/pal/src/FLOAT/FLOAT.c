@@ -4,8 +4,7 @@
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
   //结果除以2^16
-  FLOAT res = (int64_t)a * (int64_t)b;
-  res = res >> 16;
+  FLOAT res = ((int64_t)a * (int64_t)b) >> 16;
   return res;
 }
 
@@ -72,7 +71,7 @@ FLOAT f2F(float a) {
 }
 
 FLOAT Fabs(FLOAT a) {
-  if(a > 0){
+  if((a & 0x80000000) == 0){
     return a;
   }
   else{
